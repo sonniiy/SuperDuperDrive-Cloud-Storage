@@ -32,37 +32,5 @@ public class HomeController {
         return "home";
     }
 
-    /*
-    @PostMapping
-    public String handleFileUpload(@RequestParam("fileUpload") MultipartFile fileUpload, Model model) {
-
-        byte[] fileContent = null;
-
-        // Create file object and add properties
-        File file = new File();
-        file.setFilename(fileUpload.getOriginalFilename());
-        file.setContenttype(fileUpload.getContentType());
-        file.setFilesize("" + fileUpload.getSize());
-        //TODO Replace with correct userid
-        file.setUserid(1);
-
-        // Save uploaded file in file object
-        // Transform byte[] to Byte[]
-        try {
-            file.setFiledata(fileUpload.getBytes());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        fileService.addFile(file);
-        model.addAttribute("files", this.fileService.getFiles());
-
-        return "home";
-    }
-
-     */
-
-
-
 
 }
