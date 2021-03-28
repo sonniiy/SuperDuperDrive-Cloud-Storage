@@ -44,6 +44,7 @@ public class FileController {
         }
 
         fileService.addFile(file);
+        model.addAttribute("files", this.fileService.getFiles());
 
         return "home";
     }
