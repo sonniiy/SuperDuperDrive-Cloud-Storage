@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class FileService {
@@ -15,7 +16,7 @@ public class FileService {
 
     @PostConstruct
     public void postConstruct() {
-        files = new ArrayList<File>();
+        files = new ArrayList<>();
         System.out.println("Created FileService Bean");
     }
 
@@ -26,6 +27,17 @@ public class FileService {
 
     public ArrayList<File> getFiles() {
         return files;
+    }
+
+    public void deleteFile(int id) {
+
+        for(File file : files) {
+            if(file.getFileId() == id) {
+                files.remove(file);
+                break;
+            }
+        }
+
     }
 
 
