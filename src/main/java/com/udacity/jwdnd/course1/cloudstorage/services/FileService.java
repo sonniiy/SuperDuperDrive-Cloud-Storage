@@ -1,49 +1,47 @@
 package com.udacity.jwdnd.course1.cloudstorage.services;
 
 
+import com.udacity.jwdnd.course1.cloudstorage.mapper.FilesMapper;
 import com.udacity.jwdnd.course1.cloudstorage.model.File;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class FileService {
 
-    private ArrayList<File> files;
+    private FilesMapper filesMapper;
+
+    public FileService(FilesMapper filesMapper) {
+        this.filesMapper = filesMapper;
+    }
 
     @PostConstruct
     public void postConstruct() {
-        files = new ArrayList<>();
         System.out.println("Created FileService Bean");
     }
 
     public void addFile(File file) {
-        files.add(file);
+        filesMapper.addFile(file);
         System.out.println("File was added to Database: " + file.getFilename());
     }
 
-    public ArrayList<File> getFiles() {
-        return files;
+    public List<File> getFiles() {
+        return filesMapper.getAllFiles();
+
     }
 
     public void deleteFile(int id) {
-
-        for(File file : files) {
-            if(file.getFileId() == id) {
-                files.remove(file);
-                break;
-            }
-        }
+        filesMapper.delete(id);
 
     }
 
     public File getFile(int id) {
-        for (File file: files)
-            if (file.getFileId() == id) return file;
-        return null;
+        return filesMapper.getFile(id);
     }
 
 
