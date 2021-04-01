@@ -40,6 +40,11 @@ public class FileService {
 
     }
 
+    public File getFile(int id) {
+        for (File file: files)
+            if (file.getFileId() == id) return file;
+        return null;
+    }
 
 
 
