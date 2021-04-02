@@ -2,6 +2,7 @@ package com.udacity.jwdnd.course1.cloudstorage.controller;
 
 import com.udacity.jwdnd.course1.cloudstorage.model.File;
 import com.udacity.jwdnd.course1.cloudstorage.services.FileService;
+import com.udacity.jwdnd.course1.cloudstorage.services.FilewithNameExists;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -28,30 +29,18 @@ public class FileController {
     @PostMapping
     public String handleFileUpload(@RequestParam("fileUpload") MultipartFile fileUpload, Model model) {
 
-        byte[] fileContent = null;
-
-        // Create file object and add properties
-        File file = new File();
-        file.setFilename(fileUpload.getOriginalFilename());
-        file.setContenttype(fileUpload.getContentType());
-        file.setFilesize("" + fileUpload.getSize());
-        //TODO Replace with correct userid
-        Random rand = new Random();
-        int upperbound = 100;
-        int id = rand.nextInt();
-        file.setUserid(id);
-
-        // Save uploaded file in file object
-        // Transform byte[] to Byte[]
+        File file = null;
         try {
-            file.setFiledata(fileUpload.getBytes());
+            file = createFile(fileUpload, model);
+            fileService.addFile(file);
         } catch (IOException e) {
-            e.printStackTrace();
+            model.addAttribute("errorMessage", "Error not known");
+        } catch (FilewithNameExists filewithNameExists) {
+            model.addAttribute("errorMessage", "File with this name already exists");
+            model.addAttribute("failed", "File with this name already exists");
         }
 
-        fileService.addFile(file);
         model.addAttribute("files", this.fileService.getFiles());
-
         return "home";
     }
 
@@ -73,6 +62,22 @@ public class FileController {
         ResponseEntity<byte[]> response = new ResponseEntity<byte[]>(fileContent, httpHeaders, HttpStatus.OK);
 
         return response;
+    }
+
+    private File createFile(MultipartFile fileUpload, Model model) throws IOException {
+        byte[] fileContent = null;
+        File file = null;
+
+        if (fileUpload.isEmpty()) {
+            model.addAttribute("errorMessage", "File is empty!");
+            System.out.println("File is empty");
+        }
+        else {
+            // Set file parameters
+            file = new File(fileUpload.getOriginalFilename(), fileUpload.getContentType(), "" +fileUpload.getSize(),
+            1, fileUpload.getBytes());
+        }
+        return file;
     }
 
 }

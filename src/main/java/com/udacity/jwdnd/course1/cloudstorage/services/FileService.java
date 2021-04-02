@@ -6,10 +6,7 @@ import com.udacity.jwdnd.course1.cloudstorage.model.File;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class FileService {
@@ -25,8 +22,15 @@ public class FileService {
         System.out.println("Created FileService Bean");
     }
 
-    public void addFile(File file) {
-        filesMapper.addFile(file);
+    public void addFile(File file) throws FilewithNameExists {
+
+        if(filesMapper.getFileName(file.getFilename()) == null) {
+            filesMapper.addFile(file);
+        }
+        else {
+            throw new FilewithNameExists();
+        }
+
         System.out.println("File was added to Database: " + file.getFilename());
     }
 
@@ -42,6 +46,15 @@ public class FileService {
 
     public File getFile(int id) {
         return filesMapper.getFile(id);
+    }
+
+    public boolean fileAvailable(String fileName) {
+        if(filesMapper.getFileName(fileName) != null) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
 

@@ -7,6 +7,15 @@ public class File {
     private String contenttype;
     private String filesize;
     private Integer userid;
+
+    public File(String filename, String contenttype, String filesize, Integer userid, byte[] filedata) {
+        this.filename = filename;
+        this.contenttype = contenttype;
+        this.filesize = filesize;
+        this.userid = userid;
+        this.filedata = filedata;
+    }
+
     private byte[] filedata;
 
     public Integer getFileId() {
