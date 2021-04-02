@@ -27,17 +27,18 @@ public class FileController {
 
 
     @PostMapping
-    public String handleFileUpload(@RequestParam("fileUpload") MultipartFile fileUpload, Model model) {
+    public String handleFileUpload(@ModelAttribute("file") File file, @RequestParam("fileUpload") MultipartFile fileUpload, Model model) {
 
-        File file = null;
         try {
             file = createFile(fileUpload, model);
             fileService.addFile(file);
         } catch (IOException e) {
             model.addAttribute("errorMessage", "Error not known");
+            return "result";
         } catch (FilewithNameExists filewithNameExists) {
             model.addAttribute("errorMessage", "File with this name already exists");
             model.addAttribute("failed", "File with this name already exists");
+            return "result";
         }
 
         model.addAttribute("files", this.fileService.getFiles());
@@ -74,7 +75,7 @@ public class FileController {
         }
         else {
             // Set file parameters
-            file = new File(fileUpload.getOriginalFilename(), fileUpload.getContentType(), "" +fileUpload.getSize(),
+            file = new File(null, fileUpload.getOriginalFilename(), fileUpload.getContentType(), "" +fileUpload.getSize(),
             1, fileUpload.getBytes());
         }
         return file;
