@@ -34,8 +34,8 @@ public class FileService {
         System.out.println("File was added to Database: " + file.getFilename());
     }
 
-    public List<File> getFiles() {
-        return filesMapper.getAllFiles();
+    public List<File> getFiles(int userId) {
+        return filesMapper.getAllFiles(userId);
 
     }
 

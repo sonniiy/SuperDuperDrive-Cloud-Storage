@@ -3,34 +3,38 @@ package com.udacity.jwdnd.course1.cloudstorage.controller;
 import com.udacity.jwdnd.course1.cloudstorage.model.File;
 import com.udacity.jwdnd.course1.cloudstorage.services.FileService;
 import com.udacity.jwdnd.course1.cloudstorage.services.FilewithNameExists;
+import com.udacity.jwdnd.course1.cloudstorage.services.UserService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Random;
 
 @Controller
 @RequestMapping("/files")
 public class FileController {
 
     private FileService fileService;
+    private UserService userService;
 
-    public FileController(FileService fileService) {
+    public FileController(FileService fileService, UserService userService) {
         this.fileService = fileService;
+        this.userService = userService;
     }
 
 
     @PostMapping
-    public String handleFileUpload(@ModelAttribute("file") File file, @RequestParam("fileUpload") MultipartFile fileUpload, Model model) {
+    public String handleFileUpload(Authentication authentication, @ModelAttribute("file") File file,
+                                   @RequestParam("fileUpload") MultipartFile fileUpload, Model model) {
 
         try {
-            file = createFile(fileUpload, model);
+            file = createFile(fileUpload, model, authentication);
             fileService.addFile(file);
         } catch (IOException e) {
             model.addAttribute("errorMessage", "Error not known");
@@ -41,14 +45,19 @@ public class FileController {
             return "result";
         }
 
-        model.addAttribute("files", this.fileService.getFiles());
+        int userId = userService.getUser(authentication.getName()).getUserid();
+
+        model.addAttribute("files", this.fileService.getFiles(userId));
         return "home";
     }
 
     @GetMapping("/delete/{id}")
-    public String deleteFile(@PathVariable("id") int id, Model model) {
+    public String deleteFile(@PathVariable("id") int id, Model model, Authentication authentication) {
         fileService.deleteFile(id);
-        model.addAttribute("files", this.fileService.getFiles());
+
+        int userId = userService.getUser(authentication.getName()).getUserid();
+
+        model.addAttribute("files", this.fileService.getFiles(userId));
 
         return "home";
     }
@@ -65,7 +74,7 @@ public class FileController {
         return response;
     }
 
-    private File createFile(MultipartFile fileUpload, Model model) throws IOException {
+    private File createFile(MultipartFile fileUpload, Model model, Authentication authentication) throws IOException {
         byte[] fileContent = null;
         File file = null;
 
@@ -74,9 +83,12 @@ public class FileController {
             System.out.println("File is empty");
         }
         else {
+            String username = authentication.getName();
+            int userId = userService.getUser(authentication.getName()).getUserid();
             // Set file parameters
-            file = new File(null, fileUpload.getOriginalFilename(), fileUpload.getContentType(), "" +fileUpload.getSize(),
-            1, fileUpload.getBytes());
+            file = new File(null, fileUpload.getOriginalFilename(), fileUpload.getContentType(),
+                    ""+fileUpload.getSize(), userId, fileUpload.getBytes());
+
         }
         return file;
     }
