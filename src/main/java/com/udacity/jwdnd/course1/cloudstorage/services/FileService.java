@@ -22,9 +22,9 @@ public class FileService {
         System.out.println("Created FileService Bean");
     }
 
-    public void addFile(File file) throws FilewithNameExists {
+    public void addFile(File file, int userId) throws FilewithNameExists {
 
-        if(filesMapper.getFileName(file.getFilename()) == null) {
+        if(filesMapper.getFileName(file.getFilename(), userId) == null) {
             filesMapper.addFile(file);
         }
         else {
@@ -48,8 +48,8 @@ public class FileService {
         return filesMapper.getFile(id);
     }
 
-    public boolean fileAvailable(String fileName) {
-        if(filesMapper.getFileName(fileName) != null) {
+    public boolean fileAvailable(String fileName, int userId) {
+        if(filesMapper.getFileName(fileName, userId) != null) {
             return true;
         }
         else {

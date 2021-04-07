@@ -32,10 +32,11 @@ public class FileController {
     @PostMapping
     public String handleFileUpload(Authentication authentication, @ModelAttribute("file") File file,
                                    @RequestParam("fileUpload") MultipartFile fileUpload, Model model) {
+        int userID = getUserId(authentication);
 
         try {
             file = createFile(fileUpload, model, authentication);
-            fileService.addFile(file);
+            fileService.addFile(file,userID);
         } catch (IOException e) {
             model.addAttribute("errorMessage", "Error not known");
             return "result";
@@ -55,7 +56,7 @@ public class FileController {
     public String deleteFile(@PathVariable("id") int id, Model model, Authentication authentication) {
         fileService.deleteFile(id);
 
-        int userId = userService.getUser(authentication.getName()).getUserid();
+        int userId = getUserId(authentication);
 
         model.addAttribute("files", this.fileService.getFiles(userId));
 
@@ -63,7 +64,8 @@ public class FileController {
     }
 
     @GetMapping("/viewFiles/{id}")
-    public ResponseEntity<byte[]> viewFile(@PathVariable("id") int id, Model model) {
+    public ResponseEntity<byte[]> viewFile(@PathVariable("id") int id, Model model, Authentication authentication) {
+        int userId = getUserId(authentication);
         byte[] fileContent = fileService.getFile(id).getFiledata();
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.parseMediaType(fileService.getFile(id).getContenttype()));
@@ -83,14 +85,19 @@ public class FileController {
             System.out.println("File is empty");
         }
         else {
-            String username = authentication.getName();
-            int userId = userService.getUser(authentication.getName()).getUserid();
+            int userId = getUserId(authentication);
             // Set file parameters
             file = new File(null, fileUpload.getOriginalFilename(), fileUpload.getContentType(),
                     ""+fileUpload.getSize(), userId, fileUpload.getBytes());
 
         }
         return file;
+    }
+
+    private int getUserId(Authentication authentication) {
+        String username = authentication.getName();
+        int userId = userService.getUser(authentication.getName()).getUserid();
+        return userId;
     }
 
 }
