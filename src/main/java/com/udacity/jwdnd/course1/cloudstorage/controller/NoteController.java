@@ -32,12 +32,17 @@ public class NoteController {
     @PostMapping
     public String handleNoteUpload(Authentication authentication, NoteForm noteForm, Model model) {
 
-        noteForm.setUserid(getUserId(authentication));
+        int userId = getUserId(authentication);
+
+        noteForm.setUserid(userId);
         noteService.addNote(noteForm);
 
+        model.addAttribute("notes", this.noteService.getNotes(userId));
 
         return "home";
     }
+
+
 
     private int getUserId(Authentication authentication) {
         String username = authentication.getName();

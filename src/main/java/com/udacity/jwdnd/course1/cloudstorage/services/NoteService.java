@@ -6,6 +6,8 @@ import com.udacity.jwdnd.course1.cloudstorage.model.Note;
 import com.udacity.jwdnd.course1.cloudstorage.model.NoteForm;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class NoteService {
 
@@ -21,6 +23,11 @@ public class NoteService {
         notesMapper.addNote(note);
 
         System.out.println("Note was added to Database: " + note.getNoteid());
+    }
+
+    public List<Note> getNotes(int userId) {
+        return notesMapper.getAllNotes(userId);
+
     }
 
 }
