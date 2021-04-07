@@ -1,5 +1,6 @@
 package com.udacity.jwdnd.course1.cloudstorage.controller;
 
+import com.udacity.jwdnd.course1.cloudstorage.model.NoteForm;
 import com.udacity.jwdnd.course1.cloudstorage.services.FileService;
 import com.udacity.jwdnd.course1.cloudstorage.services.UserService;
 import org.springframework.security.core.Authentication;
@@ -21,7 +22,7 @@ public class HomeController {
     }
 
     @GetMapping
-    public  String getUploadPage(Authentication authentication, Model model) {
+    public  String getUploadPage(NoteForm noteForm, Authentication authentication, Model model) {
         int userId = userService.getUser(authentication.getName()).getUserid();
         model.addAttribute("files", this.fileService.getFiles(userId));
 
