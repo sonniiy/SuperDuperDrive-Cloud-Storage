@@ -56,6 +56,8 @@ public class NoteController {
         return "home";
     }
 
+    @GetMapping("edit/{id}")
+
 
     private int getUserId(Authentication authentication) {
         String username = authentication.getName();
