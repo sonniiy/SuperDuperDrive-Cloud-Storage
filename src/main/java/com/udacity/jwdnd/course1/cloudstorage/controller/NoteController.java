@@ -10,10 +10,7 @@ import com.udacity.jwdnd.course1.cloudstorage.services.UserService;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -47,6 +44,17 @@ public class NoteController {
         return "home";
     }
 
+    @GetMapping("/delete/{id}")
+    public String deleteNote(@PathVariable("id") int id, Model model, Authentication authentication) {
+        noteService.deleteNote(id);
+
+        int userId = getUserId(authentication);
+
+        model.addAttribute("notes", this.noteService.getNotes(userId));
+        model.addAttribute("files", this.fileService.getFiles(userId));
+
+        return "home";
+    }
 
 
     private int getUserId(Authentication authentication) {

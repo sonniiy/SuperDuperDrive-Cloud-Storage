@@ -30,4 +30,8 @@ public class NoteService {
 
     }
 
+    public void deleteNote(int fileId) {
+        notesMapper.delete(fileId);
+    }
+
 }
