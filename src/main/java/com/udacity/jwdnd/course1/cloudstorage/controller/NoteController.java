@@ -3,6 +3,7 @@ package com.udacity.jwdnd.course1.cloudstorage.controller;
 import com.udacity.jwdnd.course1.cloudstorage.model.File;
 import com.udacity.jwdnd.course1.cloudstorage.model.Note;
 import com.udacity.jwdnd.course1.cloudstorage.model.NoteForm;
+import com.udacity.jwdnd.course1.cloudstorage.services.FileService;
 import com.udacity.jwdnd.course1.cloudstorage.services.FilewithNameExists;
 import com.udacity.jwdnd.course1.cloudstorage.services.NoteService;
 import com.udacity.jwdnd.course1.cloudstorage.services.UserService;
@@ -23,14 +24,16 @@ public class NoteController {
 
     private UserService userService;
     private NoteService noteService;
+    private FileService fileService;
 
-    public NoteController(UserService userService, NoteService noteService) {
+    public NoteController(UserService userService, NoteService noteService, FileService fileService) {
         this.userService = userService;
         this.noteService = noteService;
+        this.fileService = fileService;
     }
 
     @PostMapping
-    public String handleNoteUpload(Authentication authentication, NoteForm noteForm, Model model) {
+    public String handleNoteUpload(Authentication authentication,@ModelAttribute("noteForm") NoteForm noteForm, Model model) {
 
         int userId = getUserId(authentication);
 
@@ -38,6 +41,8 @@ public class NoteController {
         noteService.addNote(noteForm);
 
         model.addAttribute("notes", this.noteService.getNotes(userId));
+        model.addAttribute("files", this.fileService.getFiles(userId));
+        model.addAttribute("tab","nav-notes-tab");
 
         return "home";
     }
