@@ -19,6 +19,10 @@ public interface NotesMapper {
     @Delete("DELETE FROM NOTES WHERE noteid = #{noteid}")
     void delete(Integer noteid);
 
+    @Select("SELECT * FROM NOTES WHERE noteid = #{noteId} AND userid = #{userId}")
+    File getFileName(Integer noteId, Integer userId);
 
+    @Update("UPDATE NOTES SET notetitle = #{notetitle}, notedescription = #{notedescription}  WHERE noteid = #{noteid}")
+    boolean update(Note note);
 
 }

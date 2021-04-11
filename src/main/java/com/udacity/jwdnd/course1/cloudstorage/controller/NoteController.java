@@ -30,12 +30,17 @@ public class NoteController {
     }
 
     @PostMapping
-    public String handleNoteUpload(Authentication authentication,@ModelAttribute("noteForm") NoteForm noteForm, Model model) {
+    public String handleNoteUpload(Authentication authentication, @ModelAttribute("noteForm") NoteForm noteForm, Model model) {
 
         int userId = getUserId(authentication);
 
-        noteForm.setUserid(userId);
-        noteService.addNote(noteForm);
+        if (noteForm.getNoteid() == "") {
+            noteForm.setUserid(userId);
+            noteService.addNote(noteForm);
+        } else {
+            noteService.updateNote(noteForm, userId);
+        }
+
 
         model.addAttribute("notes", this.noteService.getNotes(userId));
         model.addAttribute("files", this.fileService.getFiles(userId));

@@ -34,4 +34,14 @@ public class NoteService {
         notesMapper.delete(fileId);
     }
 
+
+    public void updateNote(NoteForm noteForm, int userId) {
+
+        Note note = new Note(Integer.parseInt(noteForm.getNoteid()), noteForm.getNotetitle(), noteForm.getNotedescription(),
+                noteForm.getUserid());
+
+        notesMapper.update(note);
+
+    }
+
 }
