@@ -22,7 +22,7 @@ public interface NotesMapper {
     @Select("SELECT * FROM NOTES WHERE noteid = #{noteId} AND userid = #{userId}")
     File getFileName(Integer noteId, Integer userId);
 
-    @Update("UPDATE NOTES SET notetitle = #{notetitle}, notedescription = #{notedescription}  WHERE noteid = #{noteid} AND userid = #{userId}")
+    @Update("UPDATE NOTES SET notetitle = #{notetitle}, notedescription = #{notedescription}  WHERE noteid = #{noteid} AND userid = #{userid}")
     boolean update(Note note);
 
 }

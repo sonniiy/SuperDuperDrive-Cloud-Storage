@@ -1,9 +1,7 @@
 package com.udacity.jwdnd.course1.cloudstorage.controller;
 
 import com.udacity.jwdnd.course1.cloudstorage.model.File;
-import com.udacity.jwdnd.course1.cloudstorage.services.FileService;
-import com.udacity.jwdnd.course1.cloudstorage.services.FilewithNameExists;
-import com.udacity.jwdnd.course1.cloudstorage.services.UserService;
+import com.udacity.jwdnd.course1.cloudstorage.services.*;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -22,12 +20,15 @@ public class FileController {
 
     private FileService fileService;
     private UserService userService;
+    private NoteService noteService;
+    private CredentialService credentialService;
 
-    public FileController(FileService fileService, UserService userService) {
+    public FileController(FileService fileService, UserService userService, NoteService noteService, CredentialService credentialService) {
         this.fileService = fileService;
         this.userService = userService;
+        this.noteService = noteService;
+        this.credentialService = credentialService;
     }
-
 
     @PostMapping
     public String handleFileUpload(Authentication authentication, @ModelAttribute("file") File file,
@@ -48,7 +49,9 @@ public class FileController {
 
         int userId = userService.getUser(authentication.getName()).getUserid();
 
+        model.addAttribute("notes", this.noteService.getNotes(userId));
         model.addAttribute("files", this.fileService.getFiles(userId));
+        model.addAttribute("credentials", this.credentialService.getCredentials(userId));
         return "home";
     }
 
@@ -58,7 +61,9 @@ public class FileController {
 
         int userId = getUserId(authentication);
 
+        model.addAttribute("notes", this.noteService.getNotes(userId));
         model.addAttribute("files", this.fileService.getFiles(userId));
+        model.addAttribute("credentials", this.credentialService.getCredentials(userId));
 
         return "home";
     }

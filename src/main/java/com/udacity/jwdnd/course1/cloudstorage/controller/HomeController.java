@@ -50,8 +50,8 @@ public class HomeController {
     @GetMapping
     public  String getUploadPage(Authentication authentication, Model model) {
         int userId = userService.getUser(authentication.getName()).getUserid();
-        model.addAttribute("files", this.fileService.getFiles(userId));
         model.addAttribute("notes", this.noteService.getNotes(userId));
+        model.addAttribute("files", this.fileService.getFiles(userId));
         model.addAttribute("credentials", this.credentialService.getCredentials(userId));
         return "home";
     }

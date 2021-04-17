@@ -3,10 +3,7 @@ package com.udacity.jwdnd.course1.cloudstorage.controller;
 import com.udacity.jwdnd.course1.cloudstorage.model.File;
 import com.udacity.jwdnd.course1.cloudstorage.model.Note;
 import com.udacity.jwdnd.course1.cloudstorage.model.NoteForm;
-import com.udacity.jwdnd.course1.cloudstorage.services.FileService;
-import com.udacity.jwdnd.course1.cloudstorage.services.FilewithNameExists;
-import com.udacity.jwdnd.course1.cloudstorage.services.NoteService;
-import com.udacity.jwdnd.course1.cloudstorage.services.UserService;
+import com.udacity.jwdnd.course1.cloudstorage.services.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,11 +19,13 @@ public class NoteController {
     private UserService userService;
     private NoteService noteService;
     private FileService fileService;
+    private CredentialService credentialService;
 
-    public NoteController(UserService userService, NoteService noteService, FileService fileService) {
+    public NoteController(UserService userService, NoteService noteService, FileService fileService, CredentialService credentialService) {
         this.userService = userService;
         this.noteService = noteService;
         this.fileService = fileService;
+        this.credentialService = credentialService;
     }
 
     @PostMapping
@@ -44,7 +43,7 @@ public class NoteController {
 
         model.addAttribute("notes", this.noteService.getNotes(userId));
         model.addAttribute("files", this.fileService.getFiles(userId));
-        model.addAttribute("tab","nav-notes-tab");
+        model.addAttribute("credentials", this.credentialService.getCredentials(userId));
 
         return "home";
     }
@@ -57,6 +56,7 @@ public class NoteController {
 
         model.addAttribute("notes", this.noteService.getNotes(userId));
         model.addAttribute("files", this.fileService.getFiles(userId));
+        model.addAttribute("credentials", this.credentialService.getCredentials(userId));
 
         return "home";
     }
