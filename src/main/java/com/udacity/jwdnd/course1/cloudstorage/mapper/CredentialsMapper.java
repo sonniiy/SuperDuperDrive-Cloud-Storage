@@ -18,4 +18,7 @@ public interface CredentialsMapper {
     @Update("UPDATE CREDENTIALS SET url = #{url}, username = #{username}, key = #{key}, password = #{password}  WHERE credentialid = #{credentialid} AND userid = #{userid}")
     boolean update(Credential credential);
 
+    @Delete("DELETE FROM CREDENTIALS WHERE credentialid = #{credentialId}")
+    void deleteCredential(int credentialId);
+
 }

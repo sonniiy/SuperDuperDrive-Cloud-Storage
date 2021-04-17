@@ -8,9 +8,7 @@ import com.udacity.jwdnd.course1.cloudstorage.services.UserService;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/credentials")
@@ -39,6 +37,19 @@ public class CredentialController {
         } else {
             credentialService.updateCredential(credentialForm, userId);
         }
+
+        model.addAttribute("notes", this.noteService.getNotes(userId));
+        model.addAttribute("files", this.fileService.getFiles(userId));
+        model.addAttribute("credentials", this.credentialService.getCredentials(userId));
+
+        return "home";
+    }
+
+    @GetMapping("/delete/{id}")
+    public String deleteCredential(@PathVariable("id") int id, Model model, Authentication authentication) {
+        credentialService.deleteCredential(id);
+
+        int userId = getUserId(authentication);
 
         model.addAttribute("notes", this.noteService.getNotes(userId));
         model.addAttribute("files", this.fileService.getFiles(userId));

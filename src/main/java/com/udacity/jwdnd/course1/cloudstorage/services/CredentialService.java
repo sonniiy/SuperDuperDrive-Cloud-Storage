@@ -59,4 +59,9 @@ public class CredentialService {
 
 
     }
+
+
+    public void deleteCredential(int id) {
+        credentialsMapper.deleteCredential(id);
+    }
 }
