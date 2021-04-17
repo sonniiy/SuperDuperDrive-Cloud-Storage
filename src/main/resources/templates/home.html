@@ -139,12 +139,13 @@
                                 <tbody>
                                 <tr th:each="credential: ${credentials}">
                                     <td>
-                                        <button type="button" class="btn btn-success">Edit</button>
+                                        <button type="button" class="btn btn-success"
+                                                th:onclick="javascript:showCredentialModal( [[${credential.getCredentialid()}]],[[${credential.getUrl()}]],[[${credential.getUsername()}]], [[${credential.getPassword()}]] )">Edit</button>
                                         <a class="btn btn-danger">Delete</a>
                                     </td>
                                     <th scope="row" th:text="${credential.getUrl()}">Example Credential URL</th>
                                     <td th:text="${credential.getUsername()}">Example Credential Username</td>
-                                    <td h:text="${credential.getPassword()}">Example Credential Password</td>
+                                    <td th:text="${credential.getPassword()}">Example Credential Password</td>
                                 </tr>
                                 </tbody>
                             </table>

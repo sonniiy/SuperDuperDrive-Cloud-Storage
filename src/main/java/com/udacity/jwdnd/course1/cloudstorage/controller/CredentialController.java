@@ -37,7 +37,7 @@ public class CredentialController {
             credentialForm.setUserid(userId + "");
             credentialService.addCredential(credentialForm);
         } else {
-            return "home";
+            credentialService.updateCredential(credentialForm, userId);
         }
 
         model.addAttribute("notes", this.noteService.getNotes(userId));
