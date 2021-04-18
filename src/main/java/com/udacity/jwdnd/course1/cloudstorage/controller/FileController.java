@@ -2,6 +2,7 @@ package com.udacity.jwdnd.course1.cloudstorage.controller;
 
 import com.udacity.jwdnd.course1.cloudstorage.model.File;
 import com.udacity.jwdnd.course1.cloudstorage.services.*;
+import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -9,8 +10,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.io.IOException;
 
@@ -30,9 +34,15 @@ public class FileController {
         this.credentialService = credentialService;
     }
 
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ModelAndView handleFileSizeLimitExceeded(MaxUploadSizeExceededException exec, ModelMap model) {
+        model.addAttribute("errorMessage", "File with this name already exists!");
+        return new ModelAndView("forward:/result", model);
+    }
+
     @PostMapping
-    public String handleFileUpload(Authentication authentication, @ModelAttribute("file") File file,
-                                   @RequestParam("fileUpload") MultipartFile fileUpload, Model model) {
+    public ModelAndView handleFileUpload(Authentication authentication, @ModelAttribute("file") File file,
+                                   @RequestParam("fileUpload") MultipartFile fileUpload, ModelMap model) {
         int userID = getUserId(authentication);
 
         try {
@@ -40,11 +50,10 @@ public class FileController {
             fileService.addFile(file,userID);
         } catch (IOException e) {
             model.addAttribute("errorMessage", "Error not known");
-            return "result";
+            return new ModelAndView("forward:/result", model);
         } catch (FilewithNameExists filewithNameExists) {
-            model.addAttribute("errorMessage", "File with this name already exists");
-            model.addAttribute("failed", "File with this name already exists");
-            return "result";
+            model.addAttribute("errorMessage", "File with this name already exists!");
+            return new ModelAndView("forward:/result", model);
         }
 
         int userId = userService.getUser(authentication.getName()).getUserid();
@@ -52,7 +61,8 @@ public class FileController {
         model.addAttribute("notes", this.noteService.getNotes(userId));
         model.addAttribute("files", this.fileService.getFiles(userId));
         model.addAttribute("credentials", this.credentialService.getCredentials(userId));
-        return "home";
+        model.addAttribute("success", true);
+        return new ModelAndView("forward:/result", model);
     }
 
     @GetMapping("/delete/{id}")
@@ -81,7 +91,7 @@ public class FileController {
         return response;
     }
 
-    private File createFile(MultipartFile fileUpload, Model model, Authentication authentication) throws IOException {
+    private File createFile(MultipartFile fileUpload, ModelMap model, Authentication authentication) throws IOException {
         byte[] fileContent = null;
         File file = null;
 
