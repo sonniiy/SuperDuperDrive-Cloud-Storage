@@ -7,8 +7,10 @@ import com.udacity.jwdnd.course1.cloudstorage.services.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.io.IOException;
 
@@ -29,7 +31,7 @@ public class NoteController {
     }
 
     @PostMapping
-    public String handleNoteUpload(Authentication authentication, @ModelAttribute("noteForm") NoteForm noteForm, Model model) {
+    public ModelAndView handleNoteUpload(Authentication authentication, @ModelAttribute("noteForm") NoteForm noteForm, ModelMap model) {
 
         int userId = getUserId(authentication);
 
@@ -40,16 +42,17 @@ public class NoteController {
             noteService.updateNote(noteForm, userId);
         }
 
-
         model.addAttribute("notes", this.noteService.getNotes(userId));
         model.addAttribute("files", this.fileService.getFiles(userId));
         model.addAttribute("credentials", this.credentialService.getCredentials(userId));
+        model.addAttribute("success", true);
+        model.addAttribute("activeTeb", "notes");
 
-        return "home";
+        return new ModelAndView("forward:/result", model);
     }
 
     @GetMapping("/delete/{id}")
-    public String deleteNote(@PathVariable("id") int id, Model model, Authentication authentication) {
+    public ModelAndView deleteNote(@PathVariable("id") int id, ModelMap model, Authentication authentication) {
         noteService.deleteNote(id);
 
         int userId = getUserId(authentication);
@@ -57,12 +60,11 @@ public class NoteController {
         model.addAttribute("notes", this.noteService.getNotes(userId));
         model.addAttribute("files", this.fileService.getFiles(userId));
         model.addAttribute("credentials", this.credentialService.getCredentials(userId));
+        model.addAttribute("success", true);
 
-        return "home";
+        return new ModelAndView("forward:/result", model);
     }
-
-    @GetMapping("edit/{id}")
-
+    
 
     private int getUserId(Authentication authentication) {
         String username = authentication.getName();
