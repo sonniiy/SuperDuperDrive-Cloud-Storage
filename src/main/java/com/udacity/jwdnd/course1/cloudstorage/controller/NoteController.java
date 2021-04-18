@@ -64,7 +64,7 @@ public class NoteController {
 
         return new ModelAndView("forward:/result", model);
     }
-    
+
 
     private int getUserId(Authentication authentication) {
         String username = authentication.getName();
