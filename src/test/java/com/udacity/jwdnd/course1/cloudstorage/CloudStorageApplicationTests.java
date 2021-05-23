@@ -39,7 +39,7 @@ class CloudStorageApplicationTests {
 
 	@Test
 	@Order(1)
-	public void getLoginPage() {
+	public void unauthorizedTest() {
 		driver.get(baseURL + this.port + "/home");
 		Assertions.assertEquals("Login", driver.getTitle());
 	}
@@ -86,6 +86,40 @@ class CloudStorageApplicationTests {
 
 
 	}
+
+
+	@Test
+	@Order(4)
+	public void noteCreation() {
+
+		WebDriverWait wait = new WebDriverWait(driver, 1);
+
+		String titel = "Hallo Udacity";
+		String description = "Spring Boot is awesome";
+
+		userSignupLogin();
+
+		HomePage homePage = new HomePage(driver);
+		wait.until(ExpectedConditions.titleContains("Home"));
+		homePage.createNote(titel, description);
+
+		ResultPage resultPage = new ResultPage(driver);
+		wait.until(ExpectedConditions.titleContains("Result"));
+		resultPage.backHome();
+
+		Assertions.assertEquals(titel, homePage.getNoteTitel());
+		Assertions.assertEquals(description, homePage.getNoteDescription());
+
+
+	}
+
+
+
+
+
+
+
+
 
 
 }

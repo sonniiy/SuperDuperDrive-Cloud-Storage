@@ -30,6 +30,7 @@ public class LoginPage {
     public void login(String username, String password) {
         //js.executeScript("arguments[0].value'" + username + "';" + inputUsername);
         inputUsername.sendKeys(username);
+
         inputPassword.sendKeys(password);
         //submitbutton.submit();
         js.executeScript("arguments[0].click();", submitbutton);
